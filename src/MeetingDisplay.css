@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300&display=swap');
+
+body {
+  background: black;
+
+  color: rgb(215,215,215);
+
+  font-family: 'Roboto', sans-serif;
+  font-size: 32px;
+  padding-top: 42px;
+}
+
+body, h1, h2, h3 {
+  font-weight: 300 !important;
+}
+
+body::after {
+  content: "";
+
+  background: url(./meerkat-background.jpeg) center center no-repeat;
+  background-size: cover;
+  opacity: 0.4;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+header { padding-left: 22px; }
+header h1, header h2 { font-size: 70px; display: inline-block; margin: 0; line-height: 1; }
+header p { font-size: 40px; color: rgba(215,215,215,0.6); margin: 0; margin-left: 62px; }
+header h2 { position: fixed; right: 22px; top: 42px }
+header .status { width: 42px; height: 42px; display: inline-block; border-radius: 50%; background-color: rgb(215,215,215); margin-right: 20px; margin-bottom: 4px }
+header .status.status-available { background-color: rgb(0, 255, 0) }
+header .status.status-busy { background-color: rgb(255, 0, 0) }
+
+section {
+  background: rgba(0,0,0,0.6);
+
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 205px;
+  padding: 0 22px;
+
+  color: rgba(215,215,215,0.6);
+
+  overflow-y: scroll;
+
+  position: absolute;
+}
+
+section::before {
+  content: "";
+  background: rgb(0,0,0);
+  background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 80%);
+  left: 0;
+  right: 0;
+  position: fixed;
+  z-index: 10;
+  height: 25px;
+  display: inline-block;
+}
+
+section::after {
+  content: "";
+  background: rgb(0,0,0);
+  background: linear-gradient(0deg, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0) 100%);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  z-index: 10;
+  height: 25px;
+  display: inline-block;
+}
+
+section div:first-child { margin-top: 25px; }
+section div:first-child.without-day ul { margin-top:0; }
+
+section ul { padding: 0; list-style: none; margin: 20px 0; line-height: 1 }
+
+section ul li { padding-bottom: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+section ul li:last-child { padding-bottom: 4px; }
+section ul li span { padding-right: 75px }
+
+section h3 {
+  display: inline;
+  margin: 0;
+  line-height: 0;
+  color: rgba(215,215,215,0.9)
+}
+
+.App {
+
+}

@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import MeetingDisplay from './MeetingDisplay';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <MeetingDisplay />
   </React.StrictMode>,
   document.getElementById('root')
 );
