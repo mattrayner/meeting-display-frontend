@@ -237,18 +237,21 @@ class MeetingDisplay extends React.Component {
         } catch (error) {
             console.log('Error thrown whilst calling `async_fetch` to lower brightness.')
 
-            this.setState({ brightnessError: true })
+            this.setState({brightnessError: true})
             return
         }
 
-        if(data["error"]) {
+        if (data["error"]) {
             console.error('Brightness api returned error:')
             console.error(data)
-            this.setState({ brightnessError: true })
+            this.setState({brightnessError: true})
             return
         }
 
-        this.setState({ brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"] })
+        this.setState({brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"]})
+
+        if (!this.state.backlightOn)
+            await this.closeDrawer()
     }
 
     async increaseBrightness() {
@@ -350,7 +353,8 @@ class MeetingDisplay extends React.Component {
                 <ErrorDisplay show={this.state.error} onClick={() => this.refresh()}></ErrorDisplay>
                 <div className={drawerClass}>
                     <div className="header" onClick={() => this.closeDrawer()}>
-                        <i><SunIcon /></i> Adjust brightness
+                        <i><SunIcon /></i>
+                        <span>Adjust brightness</span>
                     </div>
                     <div className="body">
                         <i className="minus" onClick={() => this.lowerBrightness()}>
