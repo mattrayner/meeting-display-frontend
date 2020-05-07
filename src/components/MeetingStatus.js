@@ -6,12 +6,14 @@ class MeetingStatus extends React.Component {
         let statusClass = "status status-"+this.props.status.toLowerCase()
 
         return (
-            <header className="meeting-status">
-                <div className={statusClass}></div>
-                <h1>{this.props.status}</h1>
-                <p>{this.props.summary}</p>
-                <h2><Clock></Clock></h2>
-            </header>
+            <div onClick={this.props.onClick}>
+                <header className="meeting-status" onClick={this.props.onClick}>
+                    <div className={statusClass}></div>
+                    <h1>{this.props.status}</h1>
+                    <p>{this.props.summary}</p>
+                    <h2><Clock></Clock></h2>
+                </header>
+            </div>
         )
     }
 }

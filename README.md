@@ -1,5 +1,8 @@
 # Meeting display frontend
 
+## Screenshot
+![An example of the meeting display](docs/meeting-display.png)
+
 ## Available Scripts
 
 In the project directory, you can run:
