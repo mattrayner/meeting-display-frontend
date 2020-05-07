@@ -264,7 +264,7 @@ div.drawer>div.footer {
 
 div.brightness-error {
   display: block;
-  z-index: 150;
+  z-index: 0;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -294,4 +294,21 @@ div.brightness-error>i {
   width: 100%;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+div.ping-overlay {
+  display: block;
+  z-index: -10;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+div.ping-overlay.ping-overlay-show {
+  z-index: 500;
+}
+
+div.ping-overlay.ping-overlay-hide {
+  z-index: -10;
 }

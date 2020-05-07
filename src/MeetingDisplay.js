@@ -17,7 +17,7 @@ class MeetingDisplay extends React.Component {
     brightnessOffUrl = `${this.brightnessUrl}/off`;
     brightnessPingUrl = `${this.brightnessUrl}/ping`;
     brightnessPingTimeout = 10000;
-    tickRate = 10000;
+    tickRate = 60000;
     timerID = null;
     pingTimerID = null;
 
@@ -251,7 +251,7 @@ class MeetingDisplay extends React.Component {
         this.setState({brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"]})
 
         if (!this.state.backlightOn)
-            await this.closeDrawer()
+            await this.closeDrawer(false)
     }
 
     async increaseBrightness() {
@@ -280,8 +280,10 @@ class MeetingDisplay extends React.Component {
         this.setState({showDrawer: true})
     }
 
-    async closeDrawer() {
-        await this.pingBrightness()
+    async closeDrawer(ping = true) {
+        if(ping)
+            await this.pingBrightness()
+
         this.setState({showDrawer: false})
     }
 
@@ -343,13 +345,15 @@ class MeetingDisplay extends React.Component {
     render() {
         const progressBarStyle = {width: `${this.state.brightness}%`}
         const drawerVisibility = this.state.showDrawer ? "show" : "hide"
+        const pingOverlayVisibility = this.state.backlightOn ? "hide" : "show"
         const drawerClass = `drawer drawer-${drawerVisibility}`
         const overlayClass = `overlay overlay-${drawerVisibility}`
+        const pingOverlayClass = `ping-overlay ping-overlay-${pingOverlayVisibility}`
 
         return (
             <div id="App">
                 <MeetingStatus status={this.state.status} summary={this.state.summary} onClick={() => this.openDrawer()}></MeetingStatus>
-                <MeetingList list={this.state.eventsList}></MeetingList>
+                <MeetingList list={this.state.eventsList} onClick={() => this.pingBrightness()}>></MeetingList>
                 <ErrorDisplay show={this.state.error} onClick={() => this.refresh()}></ErrorDisplay>
                 <div className={drawerClass}>
                     <div className="header" onClick={() => this.closeDrawer()}>
@@ -374,6 +378,7 @@ class MeetingDisplay extends React.Component {
                     </div>
                 </div>
                 <div className={overlayClass} onClick={() => this.closeDrawer()}></div>
+                <div className={pingOverlayClass} onClick={() => this.pingBrightness()}></div>
                 <BrightnessError show={this.state.brightnessError} />
             </div>
         )
