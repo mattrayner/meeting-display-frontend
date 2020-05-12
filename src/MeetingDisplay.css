@@ -303,6 +303,7 @@ div.ping-overlay {
   left: 0;
   bottom: 0;
   right: 0;
+  position: fixed;
 }
 
 div.ping-overlay.ping-overlay-show {
@@ -311,4 +312,113 @@ div.ping-overlay.ping-overlay-show {
 
 div.ping-overlay.ping-overlay-hide {
   z-index: -10;
+}
+
+div.display-sleep-timer-overlay {
+  z-index: -10;
+  width: 130px;
+  height: 130px;
+  margin: -65px 0 -65px 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(0,0,0,0.8);
+  border-radius: 5%;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  text-align: center;
+}
+
+div.display-sleep-timer-overlay>div.icons {
+  width: 74px;
+  height: 38px;
+  display:inline-block;
+  margin-top: 22px;
+}
+
+div.display-sleep-timer-overlay>div.icons>i.moon {
+  width: 37px;
+  height: 37px;
+  display: inline-block;
+  float: left;
+}
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses {
+  width: 28px;
+  height: 37px;
+  position: absolute;
+  right: 30px;
+
+  animation-name: rotate-180;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+}
+
+
+
+@keyframes rotate-180 {
+  0%   { transform: rotate(0deg); }
+  75%   { transform: rotate(0deg); }
+  100%   { transform: rotate(180deg); }
+}
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses>i {
+  width: 28px;
+  height: 37px;
+  display:block;
+  position: absolute;
+  top:0;
+  left:0;
+
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses>i.hourglass { animation: none; }
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses>i.hourglass-start {
+  animation-name: hourglass-start;
+}
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses>i.hourglass-half {
+  animation-name: hourglass-half;
+}
+
+div.display-sleep-timer-overlay>div.icons>div.hourglasses>i.hourglass-end {
+  animation-name: hourglass-end;
+}
+
+@keyframes hourglass-start {
+  0%   { opacity: 1; }
+  25%  { opacity: 1; }
+  30%  { opacity: 0; }
+  100% { opacity: 0;}
+}
+
+@keyframes hourglass-half {
+  0%   { opacity: 0; }
+  25%  { opacity: 0; }
+  30%  { opacity: 1; }
+  50%  { opacity: 1; }
+  55%  { opacity: 0; }
+  100% { opacity: 0;}
+}
+
+@keyframes hourglass-end {
+  0%   { opacity: 0; }
+  50%  { opacity: 0; }
+  55%  { opacity: 1; }
+  100% { opacity: 1;}
+}
+
+div.display-sleep-timer-overlay-show {
+  z-index: 450;
+  opacity: 1;
+}
+
+div.display-sleep-timer-overlay-hide {
+  z-index: -10;
+  opacity: 0;
 }

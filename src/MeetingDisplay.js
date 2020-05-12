@@ -8,14 +8,19 @@ import { ReactComponent as MinusIcon } from './minus.svg';
 import { ReactComponent as SunIcon } from './sun.svg';
 import { ReactComponent as UpIcon } from './up.svg';
 import { ReactComponent as AlertIcon } from './alert.svg';
+import { ReactComponent as MoonIcon } from './moon.svg';
+import { ReactComponent as HourGlassIcon } from './hourglass.svg';
+import { ReactComponent as HourGlassStartIcon } from './hourglass-1.svg';
+import { ReactComponent as HourGlassHalfIcon } from './hourglass-2.svg';
+import { ReactComponent as HourGlassEndIcon } from './hourglass-3.svg';
 
 class MeetingDisplay extends React.Component {
-    backendUrl = "http://localhost:4567";
-    brightnessUrl = `${this.backendUrl}/brightness`;
-    brightnessUpUrl = `${this.brightnessUrl}/up`;
-    brightnessDownUrl = `${this.brightnessUrl}/down`;
-    brightnessOffUrl = `${this.brightnessUrl}/off`;
-    brightnessPingUrl = `${this.brightnessUrl}/ping`;
+    backendUrl = null;
+    brightnessUrl = null;
+    brightnessUpUrl = null;
+    brightnessDownUrl = null;
+    brightnessOffUrl = null;
+    brightnessPingUrl = null;
     brightnessPingTimeout = 10000;
     tickRate = 60000;
     timerID = null;
@@ -23,6 +28,18 @@ class MeetingDisplay extends React.Component {
 
     constructor(props) {
         super(props);
+
+        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+            this.backendUrl = 'http://localhost:5000'
+        } else {
+            this.backendUrl = `${window.location.protocol}//${window.location.host}`
+        }
+
+        this.brightnessUrl = `${this.backendUrl}/brightness`;
+        this.brightnessUpUrl = `${this.brightnessUrl}/up`;
+        this.brightnessDownUrl = `${this.brightnessUrl}/down`;
+        this.brightnessOffUrl = `${this.brightnessUrl}/off`;
+        this.brightnessPingUrl = `${this.brightnessUrl}/ping`;
 
         this.state = {
             status: "Updating",
@@ -32,7 +49,8 @@ class MeetingDisplay extends React.Component {
             brightness: 0,
             brightnessError: false,
             backlightOn: false,
-            showDrawer: false
+            showDrawer: false,
+            displaySleep: false
         }
     }
 
@@ -272,6 +290,13 @@ class MeetingDisplay extends React.Component {
             return
         }
 
+        if(this.state.brightness === data["brightness"] && this.pingTimerID) {
+            console.log("Brightness maxed, cancelling ping timer.")
+            clearTimeout(this.pingTimerID)
+            this.pingTimerID = null
+            this.setState({ displaySleep: false })
+        }
+
         this.setState({ brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"] })
     }
 
@@ -290,8 +315,21 @@ class MeetingDisplay extends React.Component {
     async pingBrightness() {
         await this.updateBrightness()
 
-        if(this.pingTimerID)
+        const resetBrightness = async () => {
+            console.log(`Turning off the screen after ${this.brightnessPingTimeout / 1000}s timer fired.`)
+            this.pingTimerID = null
+            await this.screenOff()
+            await this.closeDrawer(false)
+            this.setState({ displaySleep: true })
+        }
+
+        // if the timer is already active, renew it (set for X more seconds, and exit)
+        if(this.pingTimerID) {
+            console.log(`Re-setting a ${this.brightnessPingTimeout / 1000}s timer to turn off the screen.`)
+
             clearTimeout(this.pingTimerID)
+            this.pingTimerID = setTimeout(resetBrightness, this.brightnessPingTimeout);
+        }
 
         let data;
         try {
@@ -311,11 +349,9 @@ class MeetingDisplay extends React.Component {
         }
 
         if(!this.state.backlightOn && data["backlight_on"]) {
-            this.pingTimerID = setTimeout(async () => {
-                this.brightnessOffUrl = null
-                await this.screenOff()
-                await this.closeDrawer()
-            }, this.brightnessPingTimeout);
+            console.log(`Setting a ${this.brightnessPingTimeout / 1000}s timer to turn off the screen.`)
+            this.setState({ displaySleep: true })
+            this.pingTimerID = setTimeout(resetBrightness, this.brightnessPingTimeout);
         }
 
         this.setState({ brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"] })
@@ -342,13 +378,27 @@ class MeetingDisplay extends React.Component {
         this.setState({ brightnessError: false, brightness: data["brightness"], backlightOn: data["backlight_on"] })
     }
 
+    cancelDisplaySleep() {
+        console.log("Cancelling sleep timer")
+
+        if(this.pingTimerID) {
+            clearTimeout(this.pingTimerID)
+            this.pingTimerID = null
+
+
+        this.setState({displaySleep: false})
+        }
+    }
+
     render() {
         const progressBarStyle = {width: `${this.state.brightness}%`}
         const drawerVisibility = this.state.showDrawer ? "show" : "hide"
         const pingOverlayVisibility = this.state.backlightOn ? "hide" : "show"
+        const displaySleepTimerOverlay = this.state.displaySleep ? "show" : "hide"
         const drawerClass = `drawer drawer-${drawerVisibility}`
         const overlayClass = `overlay overlay-${drawerVisibility}`
         const pingOverlayClass = `ping-overlay ping-overlay-${pingOverlayVisibility}`
+        const displaySleepTimerOverlayClass = `display-sleep-timer-overlay display-sleep-timer-overlay-${displaySleepTimerOverlay}`
 
         return (
             <div id="App">
@@ -379,6 +429,18 @@ class MeetingDisplay extends React.Component {
                 </div>
                 <div className={overlayClass} onClick={() => this.closeDrawer()}></div>
                 <div className={pingOverlayClass} onClick={() => this.pingBrightness()}></div>
+                <div className={displaySleepTimerOverlayClass} onClick={() => this.cancelDisplaySleep()}>
+                    <div className="icons">
+                        <i className="moon"><MoonIcon></MoonIcon></i>
+                        <div className="hourglasses">
+                            <i className="hourglass"><HourGlassIcon/></i>
+                            <i className="hourglass-start"><HourGlassStartIcon/></i>
+                            <i className="hourglass-half"><HourGlassHalfIcon/></i>
+                            <i className="hourglass-end"><HourGlassEndIcon/></i>
+                        </div>
+                    </div>
+                    Cancel
+                </div>
                 <BrightnessError show={this.state.brightnessError} />
             </div>
         )
