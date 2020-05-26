@@ -51,6 +51,7 @@ header h2 { position: fixed; right: 22px; top: 42px }
 header .status { width: 42px; height: 42px; display: inline-block; border-radius: 50%; background-color: rgb(215,215,215); margin-right: 20px; margin-bottom: 4px }
 header .status.status-available { background-color: rgb(0, 255, 0) }
 header .status.status-busy { background-color: rgb(255, 0, 0) }
+header .status.status-tentative { background-color: rgb(255, 153, 0) }
 
 section {
   background: rgba(0,0,0,0.6);

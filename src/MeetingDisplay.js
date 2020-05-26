@@ -25,6 +25,9 @@ class MeetingDisplay extends React.Component {
     tickRate = 60000;
     timerID = null;
     pingTimerID = null;
+    checkBrightnessTimerID = null;
+
+    reservedEventNames = ['personal', 'medical', 'watching kids', 'watch kids']
 
     constructor(props) {
         super(props);
@@ -58,6 +61,7 @@ class MeetingDisplay extends React.Component {
         this.timerID = setInterval(() => this.tick(), this.tickRate)
         this.tick()
         this.updateBrightness()
+        this.checkBrightnessLevel()
     }
 
     componentWillUnmount() {
@@ -104,7 +108,16 @@ class MeetingDisplay extends React.Component {
 
             return start_date > now
         })
-        const status = (currentEvent == null) ? 'Available' : 'Busy'
+
+        let status;
+        if (currentEvent == null) {
+            status = 'Available'
+        } else {
+            status = 'Busy'
+
+            if (this.reservedEventNames.includes(currentEvent.summary.toLowerCase()))
+                status = 'Tentative'
+        }
         const summary = this.generateSummary(status, nextEvent, nextGap);
         const eventsList = this.generateEventsList(events);
 
@@ -388,6 +401,15 @@ class MeetingDisplay extends React.Component {
 
         this.setState({displaySleep: false})
         }
+    }
+
+    async checkBrightnessLevel() {
+        if (this.pingTimerID == null) {
+            await this.updateBrightness()
+
+        }
+
+        this.checkBrightnessTimerID = setTimeout(() => { this.checkBrightnessTimerID = null; this.checkBrightnessLevel() }, this.tickRate / 3)
     }
 
     render() {
